@@ -15,7 +15,7 @@ int isPrime(int x) {
     if(x <= 1) {
         return 0; // edge case
     }
-    for int(i = 2; i < x; i++) { // would sqrt be more efficient?   
+    for (int i = 2; i < x; i++) { // would sqrt be more efficient?   
         if (x % i == 0) {
             return 0; // if at any point no remainer, cannot be prime
         }
@@ -50,7 +50,7 @@ int gcd(int x, int y) {
         y = -y;
     }
     while( y != 0) {
-        temp = y; // assigns temporary variable the value of y
+        int temp = y; // assigns temporary variable the value of y
         y = x % y; // checks for remainder -> are we done?
         x = temp; // x takes the temp value and loops if needed
     }
