@@ -6,7 +6,7 @@
 #define BUFFER_SIZE ONE_MB
 
 char words[BUFFER_SIZE];
-
+// hi
 void printSortedWords(char words[]); // This is the function you write
 
 void readFile(const char file_name[], char buffer[]) {
