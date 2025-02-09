@@ -19,7 +19,7 @@ void multiplyMatrices(
         double c[]) {
     // https://en.wikipedia.org/wiki/Row-_and_column-major_order
         
-        for (uint32_t i = 0; i < a_rows; i++) { // Iterates over rows of matrix A
+        for (uint32_t i = 0; i < a_rows; i++) { // Iterates over rows of matrix A.
             for (uint32_t j = 0; j < b_cols; j++) { // Iterates over columns of Matrix B
                 c[i * b_cols + j] = 0.0; // Initialized to zero
                 for (uint32_t k = 0; k < a_cols; k++) { // Iterates over columns of A | rows of B
