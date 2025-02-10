@@ -10,20 +10,22 @@
 #include <stdlib.h>
 #include "MatrixMultiply.h"
 
-void multiplyMatrices(
-        double a[],
+void multiplyMatrices( 
+        // Multiplies M X K to create Marix C
+        double a[], // Don't need to use all these!! Delete if you want
         const uint32_t a_rows,
         const uint32_t a_cols,
         double b[],
         const uint32_t b_cols,
         double c[]) {
-    // https://en.wikipedia.org/wiki/Row-_and_column-major_order
+        // https://en.wikipedia.org/wiki/Row-_and_column-major_order
         
-        for (uint32_t i = 0; i < a_rows; i++) { // Iterates over rows of matrix A.
-            for (uint32_t j = 0; j < b_cols; j++) { // Iterates over columns of Matrix B
-                c[i * b_cols + j] = 0.0; // Initialized to zero
-                for (uint32_t k = 0; k < a_cols; k++) { // Iterates over columns of A | rows of B
-                    c[i * b_cols + j] += a[i * a_cols + k] * b[k * b_cols + j]; // Multiplies elements + accumulates result
+        for (uint32_t i = 0; i < a_rows; i++) { // Iterates over rows of matrix A (0 to M); first nested loop
+            for (uint32_t j = 0; j < b_cols; j++) { // Iterates over columns of Matrix B (0 to K); second nested loop
+                c[i * b_cols + j] = 0.0; // Initialized to zero formatted as a double
+                for (uint32_t k = 0; k < a_cols; k++) { // Iterates over columns of A ("k-loop")
+                    c[i * b_cols + j] += a[i * a_cols + k] * b[k * b_cols + j]; // Progressively expands Matrix C
+                    // Accumulates result by multiplying results
             }
         }
     }
@@ -35,37 +37,45 @@ double** multiplyMatricesPtr(
         const uint32_t a_cols,
         double** b,
         const uint32_t b_cols) {
+        // https://en.wikipedia.org/wiki/Matrix_(mathematics)#Submatrix    
+           
             double** c = (double**)malloc(a_rows * sizeof(double*)); // Dynamically allocates array of pointers 
             for (uint32_t i = 0; i < a_rows; i++) {
                 c[i] = (double*)malloc(b_cols * sizeof(double)); // Allocates memory for each row in Matrix C
                 for (uint32_t j = 0; j < b_cols; j++) {
-                    c[i][j] = 0.0; // Initialization to zero 
+                    c[i][j] = 0.0; // Initialization to zero in double format
                     for (uint32_t k = 0; k < a_cols; k++) {
                         c[i][j] += a[i][k] * b[k][j]; // Element multiplication + addition
                     }
                 }
             }
-            return c; // Returns newly allocated memory
+            return c; // Returns new dynamic memory
+            // Remember not to free!! Main does for you for this lab !!
+            // You'd risk double freeing which will most likely be flagged on Valgrind
 }
 
-// https://en.wikipedia.org/wiki/Matrix_(mathematics)#Submatrix
 
-double** createSubMatrix(
+
+double** createSubMatrix( // Function needs to remove one row and one column from given matrix
          double** a,
          const uint32_t a_rows,
          const uint32_t a_cols,
 		 const uint32_t row_x, 
 		 const uint32_t col_y) {
-            double** subMatrix = (double**)malloc((a_rows - 1) * sizeof(double*)); // Allocates memory for row pointers with one row removed
-            for (uint32_t i = 0, sub_i = 0; i < a_rows; i++) { // Loops over rows of original Matrix A
-                if (i == row_x) continue; // Skips the row being removed
-                subMatrix[sub_i] = (double*)malloc((a_cols - 1) * sizeof(double)); // Allocates memory for each row
-                for (uint32_t j = 0, sub_j = 0; j < a_cols; j++) {
-                    if (j == col_y) continue; // Skips column being removed
-                    subMatrix[sub_i][sub_j] = a[i][j]; // Allocates memory for each column
-                    sub_j++;
-                }
-                sub_i++;
+            
+            double** subMatrix = (double**)malloc((a_rows - 1) * sizeof(double*)); // Allocates memory for row pointers with one row removed from given matrix
+            for (uint32_t i = 0, sub_i = 0; i < a_rows; i++) { // Loops over all rows to build new matrix (original minus 1 row)
+                if (i == row_x) 
+                continue; // Skips the row "row_x" that we need to remove
+                subMatrix[sub_i] = (double*)malloc((a_cols - 1) * sizeof(double)); // Allocates memory for each row (which points to columns)
+                    for (uint32_t j = 0, sub_j = 0; j < a_cols; j++) { // Loops over columns to build matrix (original columns minus 1)
+                        if (j == col_y) 
+                        continue; // Skips column being removed
+                        subMatrix[sub_i][sub_j] = a[i][j]; // Allocates memory for each column
+                        sub_j++; // Increments through for loop (i)
+                    }
+                sub_i++; // Increments through for loop (j)
             }
             return subMatrix; // Returns the dynamically allocated submatrix
+            // Matrix freed for you don't call free pointer!!
 }
