@@ -83,7 +83,7 @@ UTQueue *utqueuepush(UTQueue *src, int value) {
 int utqueuepop(UTQueue *src) {
 //  assert(false); // change false to make this assertion fail only if src has 0
                  // elements.
-  // assert(src->size > 0);
+  assert(src->size > 0);
   int value = src->data[0];
   // Must have the value at the front of the queue
   for (int i = 1; i < src->size; i++) {
