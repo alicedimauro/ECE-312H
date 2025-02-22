@@ -31,26 +31,31 @@ void utqueueprint(UTQueue *src) {
  */
 UTQueue *utqueuedup(const int *src, int n) {
 // { return NULL; }
-
-UTQueue *queue = (UTQueue *)malloc(sizeof(UTQueue));
-assert(queue != NULL);
-queue->size = n;
-queue->data = (int *)malloc(n * sizeof(int));
-assert(queue->data != NULL);
-for (int i = 0; i < n; i++) {
+  UTQueue *queue = (UTQueue *)malloc(sizeof(UTQueue));
+  // Allocated queue on heap
+  // Assert(queue != NULL); // 
+  queue->size = n;
+  // Initialize size
+  queue->data = (int *)malloc(n * sizeof(int));
+  // Assert(queue->data != NULL);
+  for (int i = 0; i < n; i++) {
     queue->data[i] = src[i];
-}
-return queue;
+    // Copy of source
+  }
+  return queue;
+  // Returns pointer to queue
 }
 
 /*
  * Free all memory associated with the given UTQueue.
  */
 void utqueuefree(UTQueue *self) {
-if (self) {
- free(self->data);
- free(self);
-}
+  if (self) {
+    free(self->data);
+    // First deallocate data
+    free(self);
+    // Now deallocate queue itself 
+  }
 }
 
 
@@ -60,11 +65,15 @@ if (self) {
 
 UTQueue *utqueuepush(UTQueue *src, int value) {
 //{ return NULL; }
-src->data = (int *)realloc(src->data, (src->size + 1) * sizeof(int));
-    assert(src->data != NULL);
-    src->data[src->size] = value;
-    src->size++;
-    return src;
+  src->data = (int *)realloc(src->data, (src->size + 1) * sizeof(int));
+  // Resize data to make sure the new data fits
+  // assert(src->data != NULL);
+  src->data[src->size] = value;
+  // Must add the new value at the end of the queue
+  src->size++;
+  // Make sure to account that size has increased by one
+  return src;
+  // Returns the pointer to the new queue
 }
 
 /*
@@ -74,14 +83,19 @@ src->data = (int *)realloc(src->data, (src->size + 1) * sizeof(int));
 int utqueuepop(UTQueue *src) {
 //  assert(false); // change false to make this assertion fail only if src has 0
                  // elements.
-assert(src->size > 0);
-int value = src->data[0];
-for (int i = 1; i < src->size; i++) {
+  // assert(src->size > 0);
+  int value = src->data[0];
+  // Must have the value at the front of the queue
+  for (int i = 1; i < src->size; i++) {
     src->data[i - 1] = src->data[i];
- }
- src->size--;
- src->data = (int *)realloc(src->data, src->size * sizeof(int));
- return value;
+    // Need to shift all the elements to the left one spot to account for the missing value
+  }
+  src->size--;
+  // The queue is now one element smaller
+  src->data = (int *)realloc(src->data, src->size * sizeof(int));
+  // The queue size has changed so reallocate memory appropriately 
+  return value;
+  // Returns the value of the integer popped from the queue (temporary place holder)
              
 //  return NULL;
 }
@@ -91,12 +105,16 @@ for (int i = 1; i < src->size; i++) {
  */
 UTQueue *utqueuerev(UTQueue *src) {
 //{ return NULL; } Put this back? But function should return pointer no?
-for (int i = 0, j = src->size - 1; i < j; i++, j--) {
-  int temp = src->data[i];
-  src->data[i] = src->data[j];
-  src->data[j] = temp;
-}
-return src;
+  for (int i = 0, j = src->size - 1; i < j; i++, j--) {
+  // ^^ Please work pleas work please let me use two pointers in the same loop
+    int temp = src->data[i];
+    // Need a temporary value to help switch the values
+    src->data[i] = src->data[j];
+    // Using two pointers to move the data around 
+    src->data[j] = temp;
+  }
+  return src;
+  // Returns the pointer to the reversed queue
 }
 
 
@@ -106,14 +124,19 @@ return src;
  */
 UTQueue *utqueuecombine(UTQueue *dst, UTQueue *src) {
 // { return NULL; }
-dst->data = (int *)realloc(dst->data, (dst->size + src->size) * sizeof(int));
-    assert(dst->data != NULL);
-    for (int i = 0; i < src->size; i++) {
-        dst->data[dst->size + i] = src->data[i];
-    }
-    dst->size += src->size;
-    utqueuefree(src);
-    return dst;
+  dst->data = (int *)realloc(dst->data, (dst->size + src->size) * sizeof(int));
+  // Size of dst has significantly increased now that it holds the combined queue's; make sure it's accounting for that
+  // assert(dst->data != NULL);
+  for (int i = 0; i < src->size; i++) {
+    dst->data[dst->size + i] = src->data[i];
+    // Add the src queue elements to the end of the dst queue
+  }
+  dst->size += src->size;
+  // dst queue has increased so update its size
+  utqueuefree(src);
+  // NEED TO FREE SRC BECAUSE WE NO LONGER NEED IT'S QUEUE
+  return dst;
+  // Returns pointer to new combined queue 
 }
 
 
@@ -123,9 +146,11 @@ dst->data = (int *)realloc(dst->data, (dst->size + src->size) * sizeof(int));
  * There is more than one way to do this
  */
 void utqueueswap(UTQueue *q1, UTQueue *q2) {
-UTQueue temp = *q1;
-    *q1 = *q2;
-    *q2 = temp;
+  UTQueue temp = *q1;
+  // Need a temporary queue to help swap pointers
+  *q1 = *q2;
+  *q2 = temp;
+  // This feels too easy
 }
 
 /*
@@ -139,10 +164,14 @@ UTQueue temp = *q1;
  */
 UTQueue *utqueuecpy(UTQueue *dst, const int *src, int n) {
 // { return NULL; }
-int minSize = (dst->size < n) ? dst->size : n;
-    for (int i = 0; i < minSize; i++) {
-        dst->data[i] = src[i];
-    }
-    return dst;
+  int minSize = (dst->size < n) ? dst->size : n;
+  // Can I use a ternary operator here? Shoutout Zybooks
+  // This should determine which size is smaller right?
+  for (int i = 0; i < minSize; i++) {
+    dst->data[i] = src[i];
+    // Just overwrite the dst elements until you run out of n or run out of space in dst
+  }
+  return dst;
+  // Return a pointer to the new queue
 }
 
