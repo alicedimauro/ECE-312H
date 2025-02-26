@@ -1,6 +1,6 @@
 // ECE 312(H) PA4
-// <Your Name Here>
-// <Your EID Here>
+// Alice Di Mauro
+// ad55559
 // Spring 2025
 // Speight 
 
