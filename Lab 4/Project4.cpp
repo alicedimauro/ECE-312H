@@ -22,7 +22,7 @@ int inventory_towers = 0;
 
 /* clear the inventory and reset the customer database to empty */
 void reset(void) { /* your code here */
-num_customers = 0;
+    num_customers = 0;
     inventory_books = 0;
     inventory_dice = 0;
     inventory_figures = 0;
@@ -37,7 +37,7 @@ Customer* find_or_create_customer(String *name) {
         }
     }
     if (num_customers < MAX_CUSTOMERS) {
-        customers[num_customers].name = StringDup(name);
+     customers[num_customers].name = StringDup(name);
         customers[num_customers].books = 0;
         customers[num_customers].dice = 0;
         customers[num_customers].figures = 0;
