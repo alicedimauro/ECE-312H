@@ -26,10 +26,10 @@ void reset(void) { /* your code here */
     inventory_books = 0;
     inventory_dice = 0;
     inventory_figures = 0;
-    inventory_towers = 0;
-}
+    inventory_towers = 0;}
 
-/* Find or create a customer */
+/* Personal function to aid given functions
+ Find or create a customer */
 Customer* find_or_create_customer(String *name) {
     for (int i = 0; i < num_customers; i++) {
         if (StringIsEqualTo(&(customers[i].name), name)) {
@@ -37,7 +37,7 @@ Customer* find_or_create_customer(String *name) {
         }
     }
     if (num_customers < MAX_CUSTOMERS) {
-     customers[num_customers].name = StringDup(name);
+        customers[num_customers].name = StringDup(name);
         customers[num_customers].books = 0;
         customers[num_customers].dice = 0;
         customers[num_customers].figures = 0;
@@ -46,6 +46,17 @@ Customer* find_or_create_customer(String *name) {
     }
     return NULL;
 }
+
+/* Find an existing customer */
+Customer* find_customer(String *name) {
+    for (int i = 0; i < num_customers; i++) {
+        if (StringIsEqualTo(&(customers[i].name), name)) {
+            return &customers[i];
+        }
+    }
+    return NULL;
+}
+
 
 void processSummarize() {
     printf("Inventory: Books=%d Dice=%d Figures=%d Towers=%d\n", inventory_books, inventory_dice, inventory_figures, inventory_towers);
@@ -107,11 +118,46 @@ void processPurchase() {
     
     StringDestroy(&name);
     StringDestroy(&item);
+
 }
 
 
 
-void processReturn() {}
+void processReturn() {
+    String name, item;
+    int quantity;
+    readString(&name);
+    readString(&item);
+    readNum(&quantity);
+    
+    Customer *customer = find_customer(&name);
+    if (!customer) {
+        printf("%s, you do not have %d ", name.ptr, quantity);
+        StringPrint(&item);
+        printf("\n");
+        StringDestroy(&name);
+        StringDestroy(&item);
+        return;
+    }
+    
+    int *customer_ptr = NULL, *inventory_ptr = NULL;
+    if (StringIsEqualTo(&item, &inventory)) { customer_ptr = &customer->books; inventory_ptr = &inventory_books; }
+    else if (StringIsEqualTo(&item, &dice)) { customer_ptr = &customer->dice; inventory_ptr = &inventory_dice; }
+    else if (StringIsEqualTo(&item, &figures)) { customer_ptr = &customer->figures; inventory_ptr = &inventory_figures; }
+    else if (StringIsEqualTo(&item, &towers)) { customer_ptr = &customer->towers; inventory_ptr = &inventory_towers; }
+    
+    if (customer_ptr && inventory_ptr && *customer_ptr >= quantity) {
+        *customer_ptr -= quantity;
+        *inventory_ptr += quantity;
+    } else {
+        printf("%s, you do not have %d ", name.ptr, quantity);
+        StringPrint(&item);
+        printf("\n");
+    }
+    
+    StringDestroy(&name);
+    StringDestroy(&item);
+}
 
 void processInventory() {
     String item;
@@ -123,4 +169,5 @@ void processInventory() {
     else if (StringIsEqualTo(&item, &figures)) inventory_figures += quantity;
     else if (StringIsEqualTo(&item, &towers)) inventory_towers += quantity;
     StringDestroy(&item);
+
 }
