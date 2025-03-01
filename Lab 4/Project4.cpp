@@ -20,6 +20,11 @@ int inventory_dice = 0;
 int inventory_figures = 0;
 int inventory_towers = 0;
 
+
+/* Declare external String constants from main.cpp */
+extern String inventory, dice, figures, towers;
+
+
 /* clear the inventory and reset the customer database to empty */
 void reset(void) { /* your code here */
     num_customers = 0;
