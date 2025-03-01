@@ -13,6 +13,7 @@
 Customer customers[MAX_CUSTOMERS];  
 int num_customers = 0;
 
+
 /* you'll probably need several more global variables */
 /* and of course, you have a few functions to write */
 int inventory_books = 0;
@@ -21,17 +22,15 @@ int inventory_figures = 0;
 int inventory_towers = 0;
 
 
-/* Declare external String constants from main.cpp */
-extern String inventory, dice, figures, towers;
-
-
 /* clear the inventory and reset the customer database to empty */
 void reset(void) { /* your code here */
     num_customers = 0;
     inventory_books = 0;
     inventory_dice = 0;
     inventory_figures = 0;
-    inventory_towers = 0;}
+    inventory_towers = 0;
+
+}
 
 /* Personal function to aid given functions
  Find or create a customer */
@@ -81,6 +80,7 @@ void processSummarize() {
     if (max_figures && max_figures->figures > 0) { printf("Figures: "); StringPrint(&max_figures->name); printf(" %d\n", max_figures->figures); }
     if (max_towers && max_towers->towers > 0) { printf("Towers: "); StringPrint(&max_towers->name); printf(" %d\n", max_towers->towers); }
 }
+
 
 void processPurchase() {
     String name, item;
