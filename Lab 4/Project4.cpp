@@ -61,7 +61,6 @@ void processPurchase() {
     readString(&name);
     readString(&item);
     readNum(&quantity);
-    // Initializations
     String Book = StringCreate("Books");
     String Dice = StringCreate("Dice");
     String Figures = StringCreate("Figures");
@@ -95,11 +94,11 @@ void processPurchase() {
             customers[num_customers].name = StringDup(&name);
             customers[num_customers].books = customers[num_customers].dice = customers[num_customers].figures = customers[num_customers].towers = 0;
             customer = &customers[num_customers++];
-        } else {
-            // Don't add customer if inventory is insufficient and return
-            StringDestroy(&name);
-            StringDestroy(&item);
-            return;
+        // } else {
+        //     // Don't add customer if inventory is insufficient and return
+        //     StringDestroy(&name);
+        //     StringDestroy(&item);
+        //     return;
         }
     }
     
