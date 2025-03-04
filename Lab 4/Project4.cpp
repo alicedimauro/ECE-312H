@@ -158,4 +158,20 @@ void processReturn(void) {
 void processSummarize(void) {
     printf("There are %d Books %d Dice %d Figures and %d Towers in inventory\n", inventory_books, inventory_dice, inventory_figures, inventory_towers);
     printf("we have had a total of %d different customers\n", num_customers);
+
+    int max_books = 0, max_dice = 0, max_figures = 0, max_towers = 0;
+    Customer *top_books = NULL, *top_dice = NULL, *top_figures = NULL, *top_towers = NULL;
+
+    for (int i = 0; i < num_customers; i++) {
+        if (customers[i].books > max_books) { max_books = customers[i].books; top_books = &customers[i]; }
+        if (customers[i].dice > max_dice) { max_dice = customers[i].dice; top_dice = &customers[i]; }
+        if (customers[i].figures > max_figures) { max_figures = customers[i].figures; top_figures = &customers[i]; }
+        if (customers[i].towers > max_towers) { max_towers = customers[i].towers; top_towers = &customers[i]; }
+    }
+
+    if (top_books) { StringPrint(&top_books->name); printf(" has purchased the most Books (%d)\n", max_books); }
+    if (top_dice) { StringPrint(&top_dice->name); printf(" has purchased the most Dice (%d)\n", max_dice); }
+    if (!top_figures) printf("no one has purchased any Figures\n");
+    if (!top_towers) printf("no one has purchased any Towers\n");
+
 }
