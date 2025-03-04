@@ -34,22 +34,45 @@ void reset(void) {
 void processInventory(void) {
     String item;
     int quantity;
+    
     readString(&item);
     readNum(&quantity);
-    if (StringIsEqualTo(&item, &StringCreate("Books"))) inventory_books += quantity;
-    else if (StringIsEqualTo(&item, &StringCreate("Dice"))) inventory_dice += quantity;
-    else if (StringIsEqualTo(&item, &StringCreate("Figures"))) inventory_figures += quantity;
-    else if (StringIsEqualTo(&item, &StringCreate("Towers"))) inventory_towers += quantity;
+
+    String Book = StringCreate("Books");
+    String Dice = StringCreate("Dice");
+    String Figures = StringCreate("Figures");
+    String Towers = StringCreate("Towers");
+
+    if (StringIsEqualTo(&item, &Book)) 
+        inventory_books += quantity;
+    else if (StringIsEqualTo(&item, &Dice)) 
+        inventory_dice += quantity;
+    else if (StringIsEqualTo(&item, &Figures)) 
+        inventory_figures += quantity;
+    else if (StringIsEqualTo(&item, &Towers)) 
+        inventory_towers += quantity;
+    
+    StringDestroy(&Book);
+    StringDestroy(&Dice);
+    StringDestroy(&Figures);
+    StringDestroy(&Towers);
     StringDestroy(&item);
+
 }
 
 /* Process Purchase */
-void processPurchase(void) {
+void processPurchase() {
     String name, item;
     int quantity;
+
     readString(&name);
     readString(&item);
     readNum(&quantity);
+
+    String Book = StringCreate("Books");
+    String Dice = StringCreate("Dice");
+    String Figures = StringCreate("Figures");
+    String Towers = StringCreate("Towers");
     
     if (quantity <= 0) {
         StringDestroy(&name);
@@ -74,10 +97,10 @@ void processPurchase(void) {
     }
     
     int *inventory_ptr = NULL, *customer_ptr = NULL;
-    if (StringIsEqualTo(&item, &StringCreate("Books"))) { inventory_ptr = &inventory_books; customer_ptr = &customer->books; }
-    else if (StringIsEqualTo(&item, &StringCreate("Dice"))) { inventory_ptr = &inventory_dice; customer_ptr = &customer->dice; }
-    else if (StringIsEqualTo(&item, &StringCreate("Figures"))) { inventory_ptr = &inventory_figures; customer_ptr = &customer->figures; }
-    else if (StringIsEqualTo(&item, &StringCreate("Towers"))) { inventory_ptr = &inventory_towers; customer_ptr = &customer->towers; }
+    if (StringIsEqualTo(&item, &Book)) { inventory_ptr = &inventory_books; customer_ptr = &customer->books; }
+    else if (StringIsEqualTo(&item, &Dice)) { inventory_ptr = &inventory_dice; customer_ptr = &customer->dice; }
+    else if (StringIsEqualTo(&item, &Figures)) { inventory_ptr = &inventory_figures; customer_ptr = &customer->figures; }
+    else if (StringIsEqualTo(&item, &Towers)) { inventory_ptr = &inventory_towers; customer_ptr = &customer->towers; }
     
     if (inventory_ptr && customer_ptr) {
         if (*inventory_ptr >= quantity) {
@@ -94,15 +117,25 @@ void processPurchase(void) {
     
     StringDestroy(&name);
     StringDestroy(&item);
+    StringDestroy(&Book);
+    StringDestroy(&Dice);
+    StringDestroy(&Figures);
+    StringDestroy(&Towers);
 }
 
 /* Process Return */
 void processReturn(void) {
     String name, item;
     int quantity;
+
     readString(&name);
     readString(&item);
     readNum(&quantity);
+
+    String Book = StringCreate("Books");
+    String Dice = StringCreate("Dice");
+    String Figures = StringCreate("Figures");
+    String Towers = StringCreate("Towers");
     
     Customer *customer = NULL;
     for (int i = 0; i < num_customers; i++) {
@@ -117,10 +150,10 @@ void processReturn(void) {
         printf(", we do not have you in our database\n");
     } else {
         int *inventory_ptr = NULL, *customer_ptr = NULL;
-        if (StringIsEqualTo(&item, &StringCreate("Books"))) { inventory_ptr = &inventory_books; customer_ptr = &customer->books; }
-        else if (StringIsEqualTo(&item, &StringCreate("Dice"))) { inventory_ptr = &inventory_dice; customer_ptr = &customer->dice; }
-        else if (StringIsEqualTo(&item, &StringCreate("Figures"))) { inventory_ptr = &inventory_figures; customer_ptr = &customer->figures; }
-        else if (StringIsEqualTo(&item, &StringCreate("Towers"))) { inventory_ptr = &inventory_towers; customer_ptr = &customer->towers; }
+        if (StringIsEqualTo(&item, &Book)) { inventory_ptr = &inventory_books; customer_ptr = &customer->books; }
+        else if (StringIsEqualTo(&item, &Dice)) { inventory_ptr = &inventory_dice; customer_ptr = &customer->dice; }
+        else if (StringIsEqualTo(&item, &Figures)) { inventory_ptr = &inventory_figures; customer_ptr = &customer->figures; }
+        else if (StringIsEqualTo(&item, &Towers)) { inventory_ptr = &inventory_towers; customer_ptr = &customer->towers; }
         
         if (inventory_ptr && customer_ptr && *customer_ptr >= quantity) {
             *customer_ptr -= quantity;
@@ -134,6 +167,10 @@ void processReturn(void) {
     
     StringDestroy(&name);
     StringDestroy(&item);
+    StringDestroy(&Book);
+    StringDestroy(&Dice);
+    StringDestroy(&Figures);
+    StringDestroy(&Towers);
 }
 
 /* Process Summarize */
