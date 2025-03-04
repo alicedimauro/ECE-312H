@@ -9,9 +9,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-
 #define MAX_CUSTOMERS 1000
-
 
 Customer customers[MAX_CUSTOMERS];  
 int num_customers = 0;
@@ -21,6 +19,7 @@ int inventory_figures = 0;
 int inventory_towers = 0;
 
 void reset(void) {
+    // For each customer, destroy their name string and reset customer count
     for (int i = 0; i < num_customers; i++) {
         StringDestroy(&customers[i].name);
     }
@@ -42,11 +41,13 @@ void processInventory(void) {
     String Figures = StringCreate("Figures");
     String Towers = StringCreate("Towers");
 
+    // Update the inventory based on the item read
     if (StringIsEqualTo(&item, &Book)) inventory_books += quantity;
     else if (StringIsEqualTo(&item, &Dice)) inventory_dice += quantity;
     else if (StringIsEqualTo(&item, &Figures)) inventory_figures += quantity;
     else if (StringIsEqualTo(&item, &Towers)) inventory_towers += quantity;
 
+    // Destroy strings created for comparison
     StringDestroy(&Book);
     StringDestroy(&Dice);
     StringDestroy(&Figures);
@@ -61,6 +62,7 @@ void processPurchase() {
     readString(&item);
     readNum(&quantity);
     
+    // Early return if quantity is less than or equal to 0
     if (quantity <= 0) {
         StringDestroy(&name);
         StringDestroy(&item);
@@ -68,6 +70,7 @@ void processPurchase() {
     }
     
     Customer *customer = NULL;
+    // Look for an existing customer
     for (int i = 0; i < num_customers; i++) {
         if (StringIsEqualTo(&(customers[i].name), &name)) {
             customer = &customers[i];
@@ -75,23 +78,27 @@ void processPurchase() {
         }
     }
     
+    // If no customer exists and there is space for a new one
     if (!customer && num_customers < MAX_CUSTOMERS) {
         customers[num_customers].name = StringDup(&name);
         customers[num_customers].books = customers[num_customers].dice = customers[num_customers].figures = customers[num_customers].towers = 0;
         customer = &customers[num_customers++];
     }
     
+    // Creating strings for item comparison
     String Book = StringCreate("Books");
     String Dice = StringCreate("Dice");
     String Figures = StringCreate("Figures");
     String Towers = StringCreate("Towers");
     
     int *inventory_ptr = NULL, *customer_ptr = NULL;
+    // Check which item the customer is trying to purchase and update inventory accordingly
     if (StringIsEqualTo(&item, &Book)) { inventory_ptr = &inventory_books; customer_ptr = &customer->books; }
     else if (StringIsEqualTo(&item, &Dice)) { inventory_ptr = &inventory_dice; customer_ptr = &customer->dice; }
     else if (StringIsEqualTo(&item, &Figures)) { inventory_ptr = &inventory_figures; customer_ptr = &customer->figures; }
     else if (StringIsEqualTo(&item, &Towers)) { inventory_ptr = &inventory_towers; customer_ptr = &customer->towers; }
     
+    // Process purchase if there's enough inventory
     if (inventory_ptr && customer_ptr) {
         if (*inventory_ptr >= quantity) {
             *inventory_ptr -= quantity;
@@ -101,6 +108,7 @@ void processPurchase() {
         }
     }
     
+    // Clean up
     StringDestroy(&Book);
     StringDestroy(&Dice);
     StringDestroy(&Figures);
@@ -117,6 +125,7 @@ void processReturn(void) {
     readNum(&quantity);
 
     Customer *customer = NULL;
+    // Search for the customer by name
     for (int i = 0; i < num_customers; i++) {
         if (StringIsEqualTo(&(customers[i].name), &name)) {
             customer = &customers[i];
@@ -125,8 +134,10 @@ void processReturn(void) {
     }
 
     if (!customer) {
+        // If no customer found, print an error message
         printf("Sorry "); StringPrint(&name); printf(", we do not have you in our database\n");
     } else {
+        // Creating strings for item comparison
         String Book = StringCreate("Books");
         String Dice = StringCreate("Dice");
         String Figures = StringCreate("Figures");
@@ -138,13 +149,16 @@ void processReturn(void) {
         else if (StringIsEqualTo(&item, &Figures)) { inventory_ptr = &inventory_figures; customer_ptr = &customer->figures; }
         else if (StringIsEqualTo(&item, &Towers)) { inventory_ptr = &inventory_towers; customer_ptr = &customer->towers; }
 
+        // If customer has the item and the return is valid, process the return
         if (inventory_ptr && customer_ptr && *customer_ptr >= quantity) {
             *customer_ptr -= quantity;
             *inventory_ptr += quantity;
         } else {
+            // If customer does not have enough, print an error
             StringPrint(&name); printf(", you do not have %d ", quantity); StringPrint(&item); printf("\n");
         }
         
+        // Clean up
         StringDestroy(&Book);
         StringDestroy(&Dice);
         StringDestroy(&Figures);
@@ -156,12 +170,14 @@ void processReturn(void) {
 }
 
 void processSummarize(void) {
+    // Print out inventory details
     printf("There are %d Books %d Dice %d Figures and %d Towers in inventory\n", inventory_books, inventory_dice, inventory_figures, inventory_towers);
     printf("we have had a total of %d different customers\n", num_customers);
 
     int max_books = 0, max_dice = 0, max_figures = 0, max_towers = 0;
     Customer *top_books = NULL, *top_dice = NULL, *top_figures = NULL, *top_towers = NULL;
 
+    // Find top customers based on items purchased
     for (int i = 0; i < num_customers; i++) {
         if (customers[i].books > max_books) { max_books = customers[i].books; top_books = &customers[i]; }
         if (customers[i].dice > max_dice) { max_dice = customers[i].dice; top_dice = &customers[i]; }
@@ -169,6 +185,7 @@ void processSummarize(void) {
         if (customers[i].towers > max_towers) { max_towers = customers[i].towers; top_towers = &customers[i]; }
     }
 
+    // Output the results for each item category
     if (top_books) { StringPrint(&top_books->name); printf(" has purchased the most Books (%d)\n", max_books); }
     if (!top_books) printf("no one has purchased any Books\n");
 
@@ -180,5 +197,4 @@ void processSummarize(void) {
 
     if (top_towers) { StringPrint(&top_towers->name); printf(" has purchased the most Towers (%d)\n", max_towers); }
     if (!top_towers) printf("no one has purchased any Towers\n");
-
 }
