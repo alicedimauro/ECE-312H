@@ -79,11 +79,11 @@ void processPurchase() {
     }
     
     // If no customer exists and there is space for a new one
-    if (!customer && num_customers < MAX_CUSTOMERS) {
-        customers[num_customers].name = StringDup(&name);
-        customers[num_customers].books = customers[num_customers].dice = customers[num_customers].figures = customers[num_customers].towers = 0;
-        customer = &customers[num_customers++];
-    }
+    // if (!customer && num_customers < MAX_CUSTOMERS) {
+    //     customers[num_customers].name = StringDup(&name);
+    //     customers[num_customers].books = customers[num_customers].dice = customers[num_customers].figures = customers[num_customers].towers = 0;
+    //     customer = &customers[num_customers++];
+    // }
     
     // Creating strings for item comparison
     String Book = StringCreate("Books");
@@ -103,6 +103,9 @@ void processPurchase() {
         if (*inventory_ptr >= quantity) {
             *inventory_ptr -= quantity;
             *customer_ptr += quantity;
+            customers[num_customers].name = StringDup(&name);
+            customers[num_customers].books = customers[num_customers].dice = customers[num_customers].figures = customers[num_customers].towers = 0;
+            customer = &customers[num_customers++];
         } else {
             printf("Sorry "); StringPrint(&name); printf(", we only have %d ", *inventory_ptr); StringPrint(&item); printf("\n");
         }
