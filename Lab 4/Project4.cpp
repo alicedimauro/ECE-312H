@@ -61,6 +61,11 @@ void processPurchase() {
     readString(&name);
     readString(&item);
     readNum(&quantity);
+    // Initializations
+    String Book = StringCreate("Books");
+    String Dice = StringCreate("Dice");
+    String Figures = StringCreate("Figures");
+    String Towers = StringCreate("Towers");
     
     // Early return if quantity is less than or equal to 0
     if (quantity <= 0) {
@@ -80,16 +85,25 @@ void processPurchase() {
     
     // If no customer exists and there is space for a new one
     if (!customer && num_customers < MAX_CUSTOMERS) {
-        customers[num_customers].name = StringDup(&name);
-        customers[num_customers].books = customers[num_customers].dice = customers[num_customers].figures = customers[num_customers].towers = 0;
-        customer = &customers[num_customers++];
+        // Check if there is enough inventory for the purchase
+        if ((StringIsEqualTo(&item, &Book) && inventory_books >= quantity) ||
+            (StringIsEqualTo(&item, &Dice) && inventory_dice >= quantity) ||
+            (StringIsEqualTo(&item, &Figures) && inventory_figures >= quantity) ||
+            (StringIsEqualTo(&item, &Towers) && inventory_towers >= quantity)) {
+
+            // Add the customer if enough inventory is available
+            customers[num_customers].name = StringDup(&name);
+            customers[num_customers].books = customers[num_customers].dice = customers[num_customers].figures = customers[num_customers].towers = 0;
+            customer = &customers[num_customers++];
+        } else {
+            // Don't add customer if inventory is insufficient and return
+            StringDestroy(&name);
+            StringDestroy(&item);
+            return;
+        }
     }
     
     // Creating strings for item comparison
-    String Book = StringCreate("Books");
-    String Dice = StringCreate("Dice");
-    String Figures = StringCreate("Figures");
-    String Towers = StringCreate("Towers");
     
     int *inventory_ptr = NULL, *customer_ptr = NULL;
     // Check which item the customer is trying to purchase and update inventory accordingly
@@ -116,6 +130,7 @@ void processPurchase() {
     StringDestroy(&name);
     StringDestroy(&item);
 }
+
 
 void processReturn(void) {
     String name, item;
