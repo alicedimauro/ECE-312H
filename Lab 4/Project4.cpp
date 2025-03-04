@@ -142,7 +142,7 @@ void processReturn(void) {
             *customer_ptr -= quantity;
             *inventory_ptr += quantity;
         } else {
-            printf("Sorry "); StringPrint(&name); printf(", you do not have %d ", quantity); StringPrint(&item); printf("\n");
+            StringPrint(&name); printf(", you do not have %d ", quantity); StringPrint(&item); printf("\n");
         }
         
         StringDestroy(&Book);
@@ -170,8 +170,15 @@ void processSummarize(void) {
     }
 
     if (top_books) { StringPrint(&top_books->name); printf(" has purchased the most Books (%d)\n", max_books); }
+    if (!top_books) printf("no one has purchased any Books\n");
+
     if (top_dice) { StringPrint(&top_dice->name); printf(" has purchased the most Dice (%d)\n", max_dice); }
+    if (!top_dice) printf("no one has purchased any Dice\n");
+
+    if (top_figures) { StringPrint(&top_figures->name); printf(" has purchased the most Figures (%d)\n", max_figures); }
     if (!top_figures) printf("no one has purchased any Figures\n");
+
+    if (top_towers) { StringPrint(&top_towers->name); printf(" has purchased the most Towers (%d)\n", max_towers); }
     if (!top_towers) printf("no one has purchased any Towers\n");
 
 }
