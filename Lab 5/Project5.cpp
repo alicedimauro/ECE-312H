@@ -1,7 +1,7 @@
 // Set <Project5.cpp>
 // ECE 312 Project 5 submission by
-// <Your Name Here>
-// <Your EID>
+// Alice Di Mauro
+// ad55559
 // Slip days used: <0>
 // Fall 2023
 
