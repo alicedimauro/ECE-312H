@@ -66,6 +66,14 @@ void assignSet(Set* self, const Set* other) {
 
 /* return true if x is an element of self */
 bool isMemberSet(const Set* self, int x) {
+    int left = 0, right = self->len - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (self->elements[mid] == x) return true;
+        if (self->elements[mid] < x) left = mid + 1;
+        else right = mid - 1;
+    }
+    return false;
 }
 
 /*
@@ -75,6 +83,15 @@ bool isMemberSet(const Set* self, int x) {
  * (yes, you can assume it is sorted when the function is called, that's what an invariant is all about)
  */
 void insertSet(Set* self, int x) {
+    if (isMemberSet(self, x)) return;
+    self->elements = (int*) realloc(self->elements, (self->len + 1) * sizeof(int));
+    int i = self->len - 1;
+    while (i >= 0 && self->elements[i] > x) {
+        self->elements[i + 1] = self->elements[i];
+        i--;
+    }
+    self->elements[i + 1] = x;
+    self->len++;
 }
 
 
@@ -89,6 +106,21 @@ void insertSet(Set* self, int x) {
  * is almost definitely NOT worth the trouble
  */
 void removeSet(Set* self, int x) {
+    int left = 0, right = self->len - 1, index = -1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (self->elements[mid] == x) {
+            index = mid;
+            break;
+        }
+        if (self->elements[mid] < x) left = mid + 1;
+        else right = mid - 1;
+    }
+    if (index == -1) return;
+    for (int i = index; i < self->len - 1; i++) {
+        self->elements[i] = self->elements[i + 1];
+    }
+    self->len--;
 }
 
 /* done for you already */
@@ -113,10 +145,21 @@ void displaySet(const Set* self) {
 
 /* return true if self and other have exactly the same elements */
 bool isEqualToSet(const Set* self, const Set* other) {
+    if (self->len != other->len) return false;
+    for (int i = 0; i < self->len; i++) {
+        if (self->elements[i] != other->elements[i]) return false;
+    }
+    return true;
 }
 
 /* return true if every element of self is also an element of other */
 bool isSubsetOf(const Set* self, const Set* other) {
+    int i = 0, j = 0;
+    while (i < self->len && j < other->len) {
+        if (self->elements[i] == other->elements[j]) i++;
+        j++;
+    }
+    return i == self->len;
 }
 
 /* done for you */
@@ -126,12 +169,48 @@ bool isEmptySet(const Set* self) {
 
 /* remove all elements from self that are not also elements of other */
 void intersectFromSet(Set* self, const Set* other) {
+    int* newElements = (int*) malloc(self->len * sizeof(int));
+    int i = 0, j = 0, k = 0;
+    while (i < self->len && j < other->len) {
+        if (self->elements[i] < other->elements[j]) i++;
+        else if (self->elements[i] > other->elements[j]) j++;
+        else newElements[k++] = self->elements[i++], j++;
+    }
+    free(self->elements);
+    self->elements = newElements;
+    self->len = k;
 }
 
 /* remove all elements from self that are also elements of other */
 void subtractFromSet(Set* self, const Set* other) {
+    int* newElements = (int*) malloc(self->len * sizeof(int));
+    int i = 0, j = 0, k = 0;
+    while (i < self->len) {
+        if (j < other->len && self->elements[i] == other->elements[j]) {
+            i++, j++;
+        } else {
+            newElements[k++] = self->elements[i++];
+        }
+    }
+    free(self->elements);
+    self->elements = newElements;
+    self->len = k;
 }
 
 /* add all elements of other to self (obviously, without creating duplicate elements) */
 void unionInSet(Set* self, const Set* other) {
+    int* newElements = (int*) malloc((self->len + other->len) * sizeof(int));
+    int i = 0, j = 0, k = 0;
+    while (i < self->len || j < other->len) {
+        if (i < self->len && (j >= other->len || self->elements[i] < other->elements[j])) {
+            newElements[k++] = self->elements[i++];
+        } else if (j < other->len && (i >= self->len || self->elements[i] > other->elements[j])) {
+            newElements[k++] = other->elements[j++];
+        } else {
+            newElements[k++] = self->elements[i]; i++, j++;
+        }
+    }
+    free(self->elements);
+    self->elements = newElements;
+    self->len = k;
 }
