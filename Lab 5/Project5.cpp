@@ -170,8 +170,8 @@ bool isEmptySet(const Set* self) {
 /* remove all elements from self that are not also elements of other */
 void intersectFromSet(Set* self, const Set* other) {
     int* newElements = (int*) malloc(self->len * sizeof(int));
-    int i = 0, j = 0, k = 0;
-    while (i < self->len && j < other->len) {
+    int k = 0;
+    for (int i = 0, j = 0; i < self->len && j < other->len;) {
         if (self->elements[i] < other->elements[j]) i++;
         else if (self->elements[i] > other->elements[j]) j++;
         else newElements[k++] = self->elements[i++], j++;
@@ -184,13 +184,10 @@ void intersectFromSet(Set* self, const Set* other) {
 /* remove all elements from self that are also elements of other */
 void subtractFromSet(Set* self, const Set* other) {
     int* newElements = (int*) malloc(self->len * sizeof(int));
-    int i = 0, j = 0, k = 0;
-    while (i < self->len) {
-        if (j < other->len && self->elements[i] == other->elements[j]) {
-            i++, j++;
-        } else {
-            newElements[k++] = self->elements[i++];
-        }
+    int k = 0;
+    for (int i = 0, j = 0; i < self->len;) {
+        if (j < other->len && self->elements[i] == other->elements[j]) i++, j++;
+        else newElements[k++] = self->elements[i++];
     }
     free(self->elements);
     self->elements = newElements;
