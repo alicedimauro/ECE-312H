@@ -184,11 +184,19 @@ void intersectFromSet(Set* self, const Set* other) {
 /* remove all elements from self that are also elements of other */
 void subtractFromSet(Set* self, const Set* other) {
     int* newElements = (int*) malloc(self->len * sizeof(int));
-    int k = 0;
-    for (int i = 0, j = 0; i < self->len;) {
-        if (j < other->len && self->elements[i] == other->elements[j]) i++, j++;
-        else newElements[k++] = self->elements[i++];
+    int k = 0, i = 0, j = 0;
+
+    while (i < self->len) {
+        if (j < other->len && self->elements[i] == other->elements[j]) {
+            i++; // Skip element in self if it exists in other
+            j++; // Move j forward to compare next element
+        } else if (j < other->len && self->elements[i] > other->elements[j]) {
+            j++; // Move j forward without affecting i
+        } else {
+            newElements[k++] = self->elements[i++]; // Add element to result
+        }
     }
+
     free(self->elements);
     self->elements = newElements;
     self->len = k;
