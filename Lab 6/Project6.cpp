@@ -1,3 +1,9 @@
+// Set <Project6.cpp>
+// ECE 312 Project 6 submission by
+// Alice Di Mauro
+// ad55559
+// Slip days used: <0>
+// Spring 2025
 #include "Recursion.h"
 #include <math.h>
 #include <stdio.h>
