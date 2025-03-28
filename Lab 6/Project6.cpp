@@ -18,9 +18,9 @@
  */
 int sumNums1(int x[], int n, int *calls) {
   // TODO: Your code here
-  *calls += 1;
-  if (n == 0) return 0;
-  return x[n - 1] + sumNums1(x, n - 1, calls);
+  *calls += 1; // Increment the number of calls
+  if (n == 0) return 0; // Base case: no elements
+  return x[n - 1] + sumNums1(x, n - 1, calls); // recursive call on remaining elements
 }
 
 /*
@@ -34,11 +34,11 @@ int sumNums1(int x[], int n, int *calls) {
  */
 int sumNums2(int x[], int n, int *calls) {
   // TODO: Your code here
-  *calls += 1;
+  *calls += 1; // same as previous function
   if (n == 0) return 0;
-  if (n == 1) return x[0];
-  int mid = n / 2;
-  return sumNums2(x, mid, calls) + sumNums2(x + mid, n - mid, calls);
+  if (n == 1) return x[0]; // another base case? if one element return it
+  int mid = n / 2; // Divide the array into two halves
+  return sumNums2(x, mid, calls) + sumNums2(x + mid, n - mid, calls); // sum both halves
 }
 
 /*
@@ -49,8 +49,8 @@ int sumNums2(int x[], int n, int *calls) {
 int reverse(int x, int n, int *calls) {
   // TODO: Your code here
   *calls += 1;
-  if (n == 1) return x;
-  return (x % 10) * pow(10, n - 1) + reverse(x / 10, n - 1, calls);
+  if (n == 1) return x; // Return single digit number (base case)
+  return (x % 10) * pow(10, n - 1) + reverse(x / 10, n - 1, calls); // Move the last digit to the front
 }
 
 /*
@@ -60,14 +60,14 @@ int reverse(int x, int n, int *calls) {
 Node* remove_nodes(Node* head, char val, int* calls) {
   // TODO: Your code here
   *calls += 1;
-  if (!head) return NULL;
-  head->next = remove_nodes(head->next, val, calls);
-  if (head->data == val) {
-    Node* temp = head->next;
-    free(head);
-    return temp;
+  if (!head) return NULL; // Base case: empty list
+  head->next = remove_nodes(head->next, val, calls); // Recursive call to process next node
+  if (head->data == val) { // If current node matches the target value
+    Node* temp = head->next; // First save the next node
+    free(head); // Then free the current node
+    return temp; // Return the next node as the new head
   }
-  return head;
+  return head; // Return the current node if not removed
 }
 
 /* You are given a list of item weights that represent the weight of the ith
@@ -78,10 +78,13 @@ Node* remove_nodes(Node* head, char val, int* calls) {
 int knapsack(int weights[], int n, int max_weight, int *calls) {
   // TODO: Your code here
   *calls += 1;
-  if (n == 0 || max_weight == 0) return 0;
-  if (weights[n - 1] > max_weight) return knapsack(weights, n - 1, max_weight, calls);
+  if (n == 0 || max_weight == 0) return 0; // No items or full capacity?
+  if (weights[n - 1] > max_weight) return knapsack(weights, n - 1, max_weight, calls); // Skip because it's too heavy
+  
+  // Either include the current item or exclude it, choose the maximum value
   int include = weights[n - 1] + knapsack(weights, n - 1, max_weight - weights[n - 1], calls);
   int exclude = knapsack(weights, n - 1, max_weight, calls);
+  
   return (include > exclude) ? include : exclude;
 }
 
@@ -90,11 +93,13 @@ int knapsack(int weights[], int n, int max_weight, int *calls) {
 int least_weight_path(BinaryNode *root, int *calls) {
   // TODO: Your code here
   *calls += 1;
-  if (!root) return 0;
-  if (!root->left && !root->right) return root->data;
-  if (!root->left) return root->data + least_weight_path(root->right, calls);
+  if (!root) return 0; // The tree is empty
+  if (!root->left && !root->right) return root->data; // It's a leaf node
+
+  if (!root->left) return root->data + least_weight_path(root->right, calls); // If one child, follow the not NULL path
   if (!root->right) return root->data + least_weight_path(root->left, calls);
-  int left = least_weight_path(root->left, calls);
+
+  int left = least_weight_path(root->left, calls); // Recusively call left + right, return path sum
   int right = least_weight_path(root->right, calls);
   return root->data + ((left < right) ? left : right);
 }
@@ -102,10 +107,10 @@ int least_weight_path(BinaryNode *root, int *calls) {
 bool is_win(char board[3][3], char player) {
   // (Optional but recommended) TODO: Your code here
   for (int i = 0; i < 3; i++) {
-    if (board[i][0] == player && board[i][1] == player && board[i][2] == player) return true;
-    if (board[0][i] == player && board[1][i] == player && board[2][i] == player) return true;
+    if (board[i][0] == player && board[i][1] == player && board[i][2] == player) return true; // row wins
+    if (board[0][i] == player && board[1][i] == player && board[2][i] == player) return true; // columm wins
   }
-  if (board[0][0] == player && board[1][1] == player && board[2][2] == player) return true;
+  if (board[0][0] == player && board[1][1] == player && board[2][2] == player) return true; // check the diagnols
   if (board[0][2] == player && board[1][1] == player && board[2][0] == player) return true;
   return false;
 }
@@ -119,23 +124,25 @@ bool is_win(char board[3][3], char player) {
 Record tic_tac_toe(char board[3][3], bool is_x_turn, int *calls) {
   // TODO: Your code here
   *calls += 1;
-  if (is_win(board, 'X')) return {1, 0, 0};
-  if (is_win(board, 'O')) return {0, 0, 1};
+  if (is_win(board, 'X')) return {1, 0, 0}; // X number of wins
+  if (is_win(board, 'O')) return {0, 0, 1}; // O number of wins
+
   bool is_draw = true;
   Record result = {0, 0, 0};
-  for (int i = 0; i < 3; i++) {
+
+  for (int i = 0; i < 3; i++) { // Check all possible moves
     for (int j = 0; j < 3; j++) {
-      if (board[i][j] == ' ') {
+      if (board[i][j] == ' ') { // There's an empty space
         is_draw = false;
-        board[i][j] = is_x_turn ? 'X' : 'O';
-        Record temp = tic_tac_toe(board, !is_x_turn, calls);
+        board[i][j] = is_x_turn ? 'X' : 'O'; // Place the current player's move
+        Record temp = tic_tac_toe(board, !is_x_turn, calls); // Recursive call to check the next move
         result.x_wins += temp.x_wins;
         result.o_wins += temp.o_wins;
         result.draws += temp.draws;
-        board[i][j] = ' ';
+        board[i][j] = ' '; // Undo move (backtrack)
       }
     }
   }
-  if (is_draw) return {0, 1, 0};
+  if (is_draw) return {0, 1, 0}; // No more moves left to do, it's a draw!
   return result;
 }
